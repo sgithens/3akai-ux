@@ -41,14 +41,14 @@
                 var decideLoggedIn = function(response, exists){
                     var originalURL = document.location;
                     originalURL = encodeURI(originalURL.pathname + originalURL.search + originalURL.hash);
-                    var redirecturl = sakai.config.URL.GATEWAY_URL + "?url=" + originalURL;
+                    var redirecturl = "/?url=" + originalURL;
                     if (exists && response.preferences && (response.preferences.uuid === "anonymous" || !response.preferences.uuid)) {
                         document.location = redirecturl;
                     }
                 };
 
                 $.ajax({
-                    url: sakai.config.URL.ME_SERVICE,
+                    url: '/system/me',
                     cache: false,
                     success: function(data){
                         decideLoggedIn(data, true);
@@ -97,7 +97,7 @@
             } else if (o.url.indexOf("_charset_") === -1) {
                 if (o.url.indexOf("?") === -1) {
                     o.url += "?";
-                } else {
+                } else if (o.url.lastIndexOf("&") !== o.url.length-1){
                     o.url += "&";
                 }
                 o.url += "_charset_=utf-8";

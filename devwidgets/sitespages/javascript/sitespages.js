@@ -525,18 +525,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          * @returns {String} URL safe title
          */
         sakai_global.sitespages.createURLSafeTitle = function(title) {
-            var url_safe_title = title.toLowerCase();
-            url_safe_title = url_safe_title.replace(/ /g,"-");
-            url_safe_title = url_safe_title.replace(/'/g,"");
-            url_safe_title = url_safe_title.replace(/"/g,"");
-            url_safe_title = url_safe_title.replace(/[:]/g,"");
-            url_safe_title = url_safe_title.replace(/[?]/g,"");
-            url_safe_title = url_safe_title.replace(/[=]/g,"");
-
-            var regexp = new RegExp("[^a-z0-9_-]", "gi");
-            url_safe_title = url_safe_title.replace(regexp,"-");
-
-            return url_safe_title;
+            return sakai.api.Util.makeSafeURL(title);
         };
 
         $(window).bind("ready.dashboard.sakai", function(e, tuid) {
@@ -604,7 +593,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         var $toolbarplaceholder = $("#toolbarplaceholder");
         var $toolbarcontainer = $("#toolbarcontainer");
         var $placeholderforeditor = $("#placeholderforeditor");
-        var $context_menu = $("#context_menu");
+        var $context_menu = $("#sitepages_context_menu");
         var $context_settings = $("#context_settings");
         var $title_input_container = $("#title-input-container");
         var $fl_tab_content_editor = $("#fl-tab-content-editor");
@@ -782,18 +771,12 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          */
         sakai_global.sitespages.updatePageContent = function(url, content, callback) {
 
-            var jsonString = $.toJSON({
-                "pageContent": { "sling:resourceType": "sakai/pagecontent", "sakai:pagecontent": content }});
-
             $.ajax({
-                url: url,
+                url: url + "/pageContent",
                 type: "POST",
                 data: {
-                    ":operation": "import",
-                    ":contentType": "json",
-                    ":content": jsonString,
-                    ":replace": false,
-                    ":replaceProperties": true,
+                    "sling:resourceType": "sakai/pagecontent",
+                    "sakai:pagecontent": content,
                     "_charset_": "utf-8"
                 },
                 success: function(data) {
@@ -1016,7 +999,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
                 // For a built-in list of plugins with doc: http://wiki.moxiecode.com/index.php/TinyMCE:Plugins
                 //plugins: "safari,advhr,inlinepopups,preview,noneditable,nonbreaking,xhtmlxtras,template,table,insertmore,autoresize",
-                plugins: "safari,advhr,inlinepopups,preview,noneditable,nonbreaking,xhtmlxtras,template,table,autoresize",
+                plugins: "advhr,inlinepopups,preview,noneditable,nonbreaking,xhtmlxtras,template,table,autoresize",
 
                 // Context Menu
                 //theme_advanced_buttons1: "formatselect,fontselect,fontsizeselect,bold,italic,underline,|,forecolor,backcolor,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,|,table,link,insertmore",
@@ -1296,7 +1279,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             }
 
             // save the cursor position in the editor
-            bookmark = tinyMCE.get("elm1").selection.getBookmark(2);
+            bookmark = tinyMCE.get("elm1").selection.getBookmark(1);
         };
 
         // hide the context menu when it is shown and a click happens elsewhere on the document
@@ -1862,7 +1845,9 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
 
         // Bind Widget Context Settings click event
-        $("#context_settings").bind("click", function(ev){
+        // change to mousedown based on following link
+        // http://tinymce.moxiecode.com/forum/viewtopic.php?pid=74422
+        $("#context_settings").mousedown(function(ev){
             var ed = tinyMCE.get('elm1');
             var selected = ed.selection.getNode();
             $("#dialog_content").hide();
@@ -2308,18 +2293,23 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 var tuid = "id" + Math.round(Math.random() * 1000000000);
                 var id = "widget_" + widgetid + "_" + tuid;
                 sakai_global.sitespages.newwidget_uid = id;
-                $dialog_content.html(sakai.api.Security.saneHTML('<img src="' + sakai.widgets[widgetid].img + '" id="' + id + '" class="widget_inline" border="1"/>'));
-                $("#dialog_title").html(sakai.widgets[widgetid].name);
-                sakai.api.Widgets.widgetLoader.insertWidgets(tuid,true,sakai_global.sitespages.config.basepath + "_widgets/");
-                if (sakai.widgets[widgetid].settingsWidth) {
-                    widgetSettingsWidth = sakai.widgets[widgetid].settingsWidth;
+                if (sakai.widgets[widgetid].hasSettings) {
+                    $dialog_content.html(sakai.api.Security.saneHTML('<img src="' + sakai.widgets[widgetid].img + '" id="' + id + '" class="widget_inline" border="1"/>'));
+                    $("#dialog_title").html(sakai.widgets[widgetid].name);
+                    sakai.api.Widgets.widgetLoader.insertWidgets(tuid, true, sakai_global.sitespages.config.basepath + "_widgets/");
+                    if (sakai.widgets[widgetid].settingsWidth) {
+                        widgetSettingsWidth = sakai.widgets[widgetid].settingsWidth;
+                    }
+                    $dialog_content.show();
+                    window.scrollTo(0, 0);
                 }
-                $dialog_content.show();
-                window.scrollTo(0,0);
             } else if (!widgetid){
                 window.scrollTo(0,0);
             }
             $('#insert_dialog').css({'width':widgetSettingsWidth + "px", 'margin-left':-(widgetSettingsWidth/2) + "px"}).jqmShow();
+            if(!sakai.widgets[widgetid].hasSettings){
+                sakai.api.Widgets.Container.informFinish(tuid, widgetid);
+            }
         };
 
 
@@ -2562,7 +2552,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                     // Populate the select box
                     var select = $("#revision_history_list").get(0);
                     $(select).unbind("change",changeVersionPreview);
-
+                    $(select).bind("change", changeVersionPreview);
                     select.options.length = 0;
                     for (var ver in data.versions){
 
@@ -2582,8 +2572,6 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                             var id = ver;
                             var option = new Option(name, id);
                             select.options[select.options.length] = option;
-
-                            $(select).bind("change", changeVersionPreview);
 
                             // Signal that a page reload will be needed when we go back
                             sakai_global.sitespages.versionHistoryNeedsReset = true;

@@ -108,11 +108,11 @@ define(["/dev/configuration/config.js", "/dev/lib/misc/l10n/globalization.js", "
          */
         fromEpoch : function(dateString, meData){
             var d = new Date(parseInt(dateString,10));
-            var UTCDate = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDay(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()));
+            var UTCDate = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()));
             if (meData && meData.user.locale) {
-                UTCDate.setTime(UTCDate.getTime() + meData.user.locale.timezone.GMT * 60 * 60 * 1000);
+                UTCDate.setHours(UTCDate.getUTCHours() + meData.user.locale.timezone.GMT);
             }
-            return d;
+            return UTCDate;
         },
 
         /**

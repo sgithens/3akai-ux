@@ -86,12 +86,18 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
          * available
          * @param {Object} e    Event that caused this function
          */
-        $(window).bind("ready.entity.sakai", function(e){
-            readyToRender = true;
-            if (sakai_global.currentgroup.data) {
-                $(window).trigger("render.entity.sakai", ["group", sakai_global.currentgroup.data]);
-                hasRendered = true;
-            }
+        $(window).bind("sakai.entity.ready", function(e){
+            renderEntityWidget();
+        });
+
+        var renderEntityWidget = function(){
+            var context = "group";
+            var type = "group_managemode";
+            $(window).trigger("sakai.entity.init", [context, type, sakai_global.currentgroup.data]);
+        };
+
+        $("#entity_group_back").live("click", function(){
+            document.location = "/dev/group.html?id=" + getGroupId();
         });
 
         /**
@@ -107,15 +113,13 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     if (sakai.api.Groups.isCurrentUserAManager(groupid, sakai.data.me)) {
                         triggerEditable(true);
                     }
-                    if (readyToRender && !hasRendered) {
-                        $(window).trigger("render.entity.sakai", ["group", sakai_global.currentgroup.data]);
-                    }
                     renderGroupBasicInfo();
                     // per section permissions to be fully implemented later; hiding
                     // the "Who can view or search this?" dropdowns for now
                     // renderTemplates();
                     addPickUserBinding();
                     // Show the page content
+                    renderEntityWidget();
                     sakai.api.Security.showPage();
                 } else if (data && (data.status === 401 || data.status === 403)) {
                         sakai.api.Security.send403();
@@ -225,7 +229,7 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     }
                 });
 
-                sakai.api.Groups.removeUsersFromGroup(groupid, listType, removeList, function(success) {
+                sakai.api.Groups.removeUsersFromGroup(groupid, listType, removeList, sakai.data.me, function(success) {
                     if (removeList.length > 1) {
                         sakai.api.Util.notification.show(sakai.api.Security.saneHTML($("#group_edit_group_membership_text").text()), sakai.api.Security.saneHTML($("#group_edit_users_removed_text").text()));
                     } else if (removeList.length == 1) {
@@ -270,7 +274,7 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
          * @param {String} listType Identifier for the widget/type of user we're removing (member or a manager)
          */
         var addUsers = function(listType, users) {
-            sakai.api.Groups.addUsersToGroup(groupid, listType, users, function(success) {
+            sakai.api.Groups.addUsersToGroup(groupid, listType, users, sakai.data.me, function(success) {
                 if (success) {
                     if (users.length && users.length > 1) {
                         sakai.api.Util.notification.show(sakai.api.Security.saneHTML($("#group_edit_group_membership_text").text()), sakai.api.Security.saneHTML($("#group_edit_users_added_text").text()));
@@ -285,8 +289,18 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
             });
         };
 
-        var addContent = function() {
-            renderItemLists('content');
+        var addContent = function(fileList) {
+            // set object properties to match those expected in the listpeople widget
+            for (var i in fileList.items) {
+                if (fileList.items.hasOwnProperty(i)) {
+                    fileList.items[i]["sling:resourceType"] = "sakai/pooled-content";
+                    fileList.items[i]["jcr:name"] = fileList.items[i].value;
+                    fileList.items[i]["jcr:mimeType"] = fileList.items[i].mimetype;
+                    fileList.items[i]["sakai:pooled-content-file-name"] = fileList.items[i].name;
+                }
+            }
+            // add new files to content lister
+            $(window).trigger("content.add.listpeople.sakai", {"list": fileList.items});
             sakai.api.Util.notification.show(sakai.api.Security.saneHTML($("#group_edit_group_content_text").text()),
                                              sakai.api.Security.saneHTML($("#group_edit_content_added_text").text()),
                                              sakai.api.Util.notification.type.INFORMATION);
@@ -514,7 +528,7 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                     $(window).unbind("finished.contentpicker.sakai");
                     $(window).bind("finished.contentpicker.sakai", function(e, fileList) {
                         if (fileList.items.length) {
-                            addContent();
+                            addContent(fileList);
                         }
                     });
                 });

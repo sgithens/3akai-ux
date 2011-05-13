@@ -387,7 +387,12 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/content_profile.js"]
                         $(commentsNamePosterTxt, rootel).val("");
                         $(commentsMailPosterTxt, rootel).val("");
                         // Add an acitivty
-                        sakai.api.Activity.createActivity("/p/" + sakai_global.content_profile.content_data.data["jcr:name"], "content", "default", {"sakai:activityMessage": "__MSG__CONTENT_ADDED_COMMENT__"});
+                        sakai.api.Activity.createActivity("/p/" + sakai_global.content_profile.content_data.data["jcr:name"], "content", "default", {"sakai:activityMessage": "__MSG__CONTENT_ADDED_COMMENT__"}, function(responseData, success){
+                            if (success) {
+                                // update the entity widget with the new activity
+                                $(window).trigger("updateContentActivity.entity.sakai", "__MSG__CONTENT_ADDED_COMMENT__");
+                            }
+                        });
                         // Get the comments.
                         getComments();
                     },
@@ -422,7 +427,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/content_profile.js"]
 
             // If you're changing an comment-widget, then the saved values need to be filled in
             if (exists) {
-                $("input[name=" + commentsDirectionRbt + "][value=" + widgetSettings.direction + "]", rootel).attr("checked", true);
+                $("input[name='" + commentsDirectionRbt + "'][value='" + widgetSettings.direction + "']", rootel).attr("checked", true);
                 if (widgetSettings['sakai:allowanonymous'] && widgetSettings['sakai:allowanonymous'] === true) {
                     $("#comments_DontRequireLogInID", rootel).attr("checked", true);
                     $(commentsNameReqChk, rootel).attr("disabled", false);
