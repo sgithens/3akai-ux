@@ -48,6 +48,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
         var entityUserMessage = "#entity_user_message";
         var entityUserAddToContacts = "#entity_user_add_to_contacts";
         var entityUserDropdown = "#entity_user_image.s3d-dropdown-menu";
+        var entityGroupDropdown = "#entity_group_image.s3d-dropdown-menu";
 
         /**
          * The 'context' variable can have the following values:
@@ -97,6 +98,28 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                     break;
                 case "group_managed":
                     $('#entity_groupsettings_dropdown').html(sakai.api.Util.TemplateRenderer("entity_groupsettings_dropdown", context));
+
+                    $('#ew_group_settings_edit_link').live("click", function(ev) {
+                        $(window).trigger("init.worldsettings.sakai", context.data.authprofile['sakai:group-id']);
+                        $('#entity_groupsettings_dropdown').jqmHide();
+                    });
+
+                    $(entityGroupDropdown).hover(function(){
+                        var $li = $(this);
+                        var $subnav = $li.children(".s3d-dropdown-container");
+
+                        var pos = $li.position();
+                        $subnav.css("left", pos.left + 5);
+                        $subnav.css("margin-top", $li.height() + 4 + "px");
+                        $subnav.show();
+                    }, function(){
+                        var $li = $(this);
+                        $li.children(".s3d-dropdown-container").hide();
+                    });
+                    $(window).trigger("setData.changepic.sakai", ["group", context.data.authprofile["sakai:group-id"]]);
+                    $(window).bind("ready.changepic.sakai", function(){
+                        $(window).trigger("setData.changepic.sakai", ["group", context.data.authprofile["sakai:group-id"]]);
+                    });
                     break;
                 case "group":
                     $(window).bind("ready.joinrequestbuttons.sakai", function() {
@@ -230,6 +253,11 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 .jqmShow();
             });
 
+            $("#ew_group_categories_link").click(function(){
+                $("#assignlocation_container").jqmShow();
+                $('#entity_groupsettings_dropdown').jqmHide();
+            });
+
             $('#ew_permissions>a').click(function(e){
                 e.preventDefault();
                 $(window).trigger("init.contentpermissions.sakai");
@@ -238,13 +266,19 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
 
             $('#ew_upload>a').click(function(e){
                 e.preventDefault();
-                $(window).trigger("init.fileupload.sakai");
+                $(window).trigger("init.uploadnewversion.sakai");
                 $('#entity_contentsettings_dropdown').jqmHide();
             });
 
-        });
-
-        $(window).bind("ready.contentpreview.sakai", function(){
+            $("#ew_revhistory").click(function(e){
+                $(window).trigger("init.versions.sakai", {
+                    pageSavePath: sakai_global.content_profile.content_data.content_path,
+                    saveRef: "",
+                    showByDefault: true
+                });
+                $('#entity_contentsettings_dropdown').jqmHide();
+            });
+            
             $("#ew_content_preview_delete>a").bind("click", function(e){
                 e.preventDefault();
                 window.scrollTo(0,0);
@@ -261,6 +295,18 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 );
                 $('#entity_contentsettings_dropdown').jqmHide();
             });
+
+            $(".addpeople_init").click(function(){
+                $(window).trigger("init.addpeople.sakai", [tuid]);
+                $("#entity_groupsettings_dropdown").jqmHide();
+            })
+
+        });
+
+        // An event to call from the worldsettings dialog so that we can
+        // refresh the title if it's been saved.
+        $(window).bind("sakai.entity.updateTitle", function(e, title) {
+            $('#entity_name').html(title);
         });
 
         $(window).trigger("sakai.entity.ready");

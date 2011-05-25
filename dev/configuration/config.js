@@ -22,6 +22,8 @@ define(function(){
             CONTENT_MEDIA_URL: "/dev/content_media.html",
             COURSES_SITES_URL: "/dev/courses_sites.html",
             GATEWAY_URL: "/",
+            GROUP_DEFAULT_ICON_URL_SMALL: "/dev/images/group_avatar_icon_35x35_nob.png",
+            GROUP_DEFAULT_ICON_URL: "/dev/images/group_avatar_icon_64x64_nob.png",
             GROUP_EDIT_URL: "/group/edit",
             I10N_BUNDLE_URL: "/dev/lib/misc/l10n/globinfo/Globalization.__CODE__.min.js",
             I18N_BUNDLE_ROOT: "/dev/bundle/",
@@ -36,15 +38,16 @@ define(function(){
             PUBLIC_MY_DASHBOARD_URL: "/home",
             PUBLIC_PEOPLE_URL: "/dev/public_people.html",
             PUBLIC_SEARCH_URL: "/dev/public_search.html",
+            SEARCH_ACTIVITY_ALL_URL: "/var/search/activity/all.json",
             SEARCH_CONTENT_URL: "/search/content",
             SEARCH_GENERAL_URL: "/search",
             SEARCH_PEOPLE_URL: "/search/people",
             SEARCH_GROUP_URL: "/search/groups",
             SEARCH_SITES_URL: "/search/sites",
-            TINY_MCE_CONTENT_CSS: "/dev/css/FSS/fss-base.css,/dev/css/sakai/sakai.base.css,/dev/css/sakai/sakai.editor.css,/dev/css/sakai/sakai.show.css",
+            TINY_MCE_CONTENT_CSS: "/dev/css/sakai/sakai.main.css,/dev/css/sakai/sakai.corev1.css,/dev/css/sakai/sakai.editor.css,/dev/css/sakai/sakai.content_profile.css",
             TINY_MCE_EDITOR_CSS: "/dev/css/sakai/tinymce_editor_styling.css",
-            USER_DEFAULT_ICON_URL_SMALL: "/dev/images/user_avatar_icon_32x32.png",
-            USER_DEFAULT_ICON_URL: "/dev/images/user_avatar_icon_48x48.png",
+            USER_DEFAULT_ICON_URL_SMALL: "/dev/images/default_User_icon_35x35.png",
+            USER_DEFAULT_ICON_URL: "/dev/images/default_User_icon_50x50.png",
             USER_DEFAULT_UPLOAD_FOLDER: "/private/uploads",
 
             // Services
@@ -57,6 +60,7 @@ define(function(){
             CONTACTS_FIND: "/var/contacts/find.json",
             CONTACTS_FIND_STATE: "/var/contacts/findstate.json",
             CONTACTS_FIND_ALL: "/var/contacts/find-all.json",
+            CONTACTS_FIND_BY_USER: "/var/contacts/findbyuser.json",
             CREATE_USER_SERVICE: "/system/userManager/user.create.html",
             DISCUSSION_GETPOSTS_THREADED: "/var/search/discussions/threaded.json?path=__PATH__&marker=__MARKER__",
             DISCUSSION_INITIALPOSTS_SERVICE: "/var/search/discussions/initialdiscussionposts.json?path=__PATH__&items=__ITEMS__&page=__PAGE__",
@@ -88,6 +92,8 @@ define(function(){
             SDATA_FETCH_URL: "/sites/__PLACEMENT__/__TUID__/__NAME__",
             SDATA_FETCH: "/",
             // --
+            SEARCH_ALL_ENTITIES: "/var/search/general.json",
+            SEARCH_ALL_ENTITIES_ALL: "/var/search/general-all.json",
             SEARCH_ALL_FILES: "/var/search/pool/all.json",
             SEARCH_ALL_FILES_ALL: "/var/search/pool/all-all.json",
             SEARCH_ALL_FILES_SERVICE: "/var/search/files/allfiles.json",
@@ -494,6 +500,11 @@ define(function(){
                     }
                 }
             },
+            /*
+             * set what name to display where only the first name is used
+             */
+            userFirstNameDisplay: "firstName",
+
             /*
              * set how the user's name is displayed across the entire system
              * - values can be compound, like "firstName lastName" or singular like "displayName"
@@ -1335,7 +1346,7 @@ define(function(){
                 }
             },
             easiaticlanguagesliterature: {
-                title: "Eastern, Asiatic, African, American and Australasian Languages, Literature and related subjects",
+                title: "Exotic Languages, Literature and related subjects",
                 children: {
                     chinesestudies: {
                         title: "Chinese studies"
@@ -1490,6 +1501,8 @@ define(function(){
                     "_ref": "id267187828",
                     "_title": "My Dashboard",
                     "_order": 0,
+                    "_canEdit": true,
+                    "_nonEditable": true,
                     "main": {
                         "_ref": "id267187828",
                         "_order": 0,
@@ -1500,25 +1513,40 @@ define(function(){
                     "_title": "My Messages",
                     "_ref": "id1165301022",
                     "_order": 1,
+                    "_canEdit": true,
+                    "_canSubedit": true,
+                    "_nonEditable": true,
                     "inbox": {
                         "_ref": "id1165301022",
                         "_order": 0,
-                        "_title": "Inbox"
+                        "_title": "Inbox",
+                        "_canEdit": true,
+                        "_canSubedit": true,
+                        "_nonEditable": true
                     },
                     "invitations": {
                         "_ref": "id9867733100",
                         "_order": 1,
-                        "_title": "Invitations"
+                        "_title": "Invitations",
+                        "_canEdit": true,
+                        "_canSubedit": true,
+                        "_nonEditable": true
                     },
                     "sent": {
                         "_ref": "id4253485084",
                         "_order": 2,
-                        "_title": "Sent"
+                        "_title": "Sent",
+                        "_canEdit": true,
+                        "_canSubedit": true,
+                        "_nonEditable": true
                     },
                     "trash": {
                         "_ref": "id3915412565",
                         "_order": 3,
-                        "_title": "Trash"
+                        "_title": "Trash",
+                        "_canEdit": true,
+                        "_canSubedit": true,
+                        "_nonEditable": true
                     }
                 }
             },
@@ -1564,17 +1592,17 @@ define(function(){
                         "column1": [{
                             "uid": "id6902437615810",
                             "visible": "block",
-                            "name": "mycontent"
+                            "name": "recentchangedcontent"
                         }],
                         "column2": [{
                             "uid": "id9495917029618",
                             "visible": "block",
-                            "name": "mygroups"
+                            "name": "recentmemberships"
                         }],
                         "column3": [{
                             "uid": "id7360391172040",
                             "visible": "block",
-                            "name": "mycontacts"
+                            "name": "recentcontactsnew"
                         }]
                     }
                 }
@@ -1586,13 +1614,15 @@ define(function(){
                 "profile": {
                     "_title": "My Profile",
                     "_altTitle": "${user}'s Profile",
-                    "_order": 0
+                    "_order": 0,
+                    "_nonEditable": true
                 },
                 "library": {
                     "_ref": "id9834611274",
                     "_order": 1,
                     "_title": "My Library",
                     "_altTitle": "${user}'s Library",
+                    "_nonEditable": true,
                     "main": {
                         "_ref": "id9834611274",
                         "_order": 0,
@@ -1604,6 +1634,7 @@ define(function(){
                     "_order": 2,
                     "_ref": "id213623673",
                     "_altTitle": "${user}'s Memberships",
+                    "_nonEditable": true,
                     "main": {
                         "_ref": "id213623673",
                         "_order": 0,
@@ -1615,6 +1646,7 @@ define(function(){
                     "_order": 3,
                     "_ref": "id1193715035",
                     "_altTitle": "${user}'s Contacts",
+                    "_nonEditable": true,
                     "main": {
                         "_ref": "id1193715035",
                         "_order": 0,
@@ -1651,16 +1683,6 @@ define(function(){
                 "threecolumn": {
                     "name": "Three equal columns",
                     "widths": [33, 33, 33],
-                    "siteportal": false
-                },
-                "fourcolumn": {
-                    "name": "Four equal columns",
-                    "widths": [25, 25, 25, 25],
-                    "siteportal": false
-                },
-                "fivecolumn": {
-                    "name": "Five equal columns",
-                    "widths": [20, 20, 20, 20, 20],
                     "siteportal": false
                 }
             },
@@ -1730,11 +1752,11 @@ define(function(){
                                         "_ref":"id6573920372",
                                         "_order":0,
                                         "_title":"Participants",
-                                        //"_nonEditable": true,
+                                        "_nonEditable": true,
                                         "main":{
                                             "_ref":"id6573920372",
                                             "_order":0,
-                                            //"_nonEditable": true,
+                                            "_nonEditable": true,
                                             "_title":"Participants"
                                         }
                                     }
@@ -2540,5 +2562,6 @@ define(function(){
             }
         ]
     };
+
     return config;
 });

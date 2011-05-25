@@ -98,13 +98,13 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          */
         var fillInUserInfo = function(user){
             if (user) {
-                $(addToContactsInfoDisplayName).text(sakai.api.User.getDisplayName(user));
+                $(addToContactsInfoDisplayName).text(user.username);
                 user.pictureLink = sakai.api.Util.constructProfilePicture(user);
                 // Check for picture
                 if (user.pictureLink) {
-                    $(addToContactsInfoProfilePicture).html('<img alt="' + $("#addtocontacts_profilepicture_alt").html() + '" src="' + user.pictureLink + '" width="60" height="60" />');
+                    $(addToContactsInfoProfilePicture).html('<img alt="' + $("#addtocontacts_profilepicture_alt").html() + '" src="' + user.pictureLink + '" class="s3d-icon-50" />');
                 } else {
-                    $(addToContactsInfoProfilePicture).html('<img alt="' + $("#addtocontacts_profilepicture_alt").html() + '" src="' + sakai.config.URL.USER_DEFAULT_ICON_URL + '" width="60" height="60" />');
+                    $(addToContactsInfoProfilePicture).html('<img alt="' + $("#addtocontacts_profilepicture_alt").html() + '" src="' + sakai.config.URL.USER_DEFAULT_ICON_URL + '" class="s3d-icon-50" />');
                 }
             }
         };
@@ -222,6 +222,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          * @param {Function} callback The callback function that will be executed after the request.
          */
         var initialize = function(user){
+            user.userid = user.userid || user.uuid;
             contactToAdd = user;
             fillInUserInfo(contactToAdd);
 
