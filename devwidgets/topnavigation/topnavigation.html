@@ -38,7 +38,7 @@
 
 <div id="search_template" style="display:none"><!--
         {if files && files.length}
-            <a href="/dev/search2.html#l=content&q=${query}" class="topnavigation_search_results_section_header">__MSG__CONTENT__</a>
+            <a href="/search#l=content&q=${query}" class="topnavigation_search_results_section_header">__MSG__CONTENT__</a>
             <ul>
                {for file in files}
                     <li>
@@ -52,7 +52,7 @@
             </ul>
         {/if}
         {if people && people.length}
-            <a href="/dev/search2.html#l=people&q=${query}" class="topnavigation_search_results_section_header">__MSG__PEOPLE__</a>
+            <a href="search#l=people&q=${query}" class="topnavigation_search_results_section_header">__MSG__PEOPLE__</a>
             <ul>
                 {for person in people}
                     <li>
@@ -67,7 +67,7 @@
         {/if}
         {for c in sakai.config.worldTemplates}
             {if groups[c.id] && groups[c.id].length}
-                <a href="/dev/search2.html#l=${c.id}&category=${c.id}&q=${query}" class="topnavigation_search_results_section_header">${sakai.api.i18n.General.getValueForKey(c.title)}</a>
+                <a href="/search#l=${c.id}&category=${c.id}&q=${query}" class="topnavigation_search_results_section_header">${sakai.api.i18n.General.getValueForKey(c.title)}</a>
                 <ul>
                     {for group in groups[c.id]}
                         <li>
@@ -124,6 +124,8 @@
                         <input type="password" alt="__MSG__PASSWORD__" maxlength="255" id="topnavigation_user_options_login_fields_password" name="topnav_login_password" class="login-container-textfield" tabindex="2" />
                         <button type="button" id="topnavigation_user_options_login_forgotten" class="s3d-link-button" style="display:none;">__MSG__FORGOTTEN_YOUR_USERNAME_OR_PASSWORD__?</button>
                         <hr class="s3d-split-line fl-push"/>
+                        <span class="topnavigation_sign_up_link">No account yet?</span>
+                        <a class="s3d-regular-links topnavigation_sign_up_link" href="/dev/create_new_account2.html">Sign up</a>
                         <button id="topnavigation_user_options_login_button_login" type="submit" class="s3d-button s3d-button-light-gray-square" tabindex="3">
                             <span class="s3d-button-inner">__MSG__SIGN_IN__</span>
                         </button>
