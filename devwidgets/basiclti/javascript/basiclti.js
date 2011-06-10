@@ -271,7 +271,7 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
                 json.ltikey = $(basicltiSettingsLtiKey).val() || "";
                 json.ltisecret = $(basicltiSettingsLtiSecret).val() || "";
                 json["debug@TypeHint"] = "Boolean";
-                json.debug = $('#basiclti_settings_debug:checked').val() !== null;
+                json.debug = false; //$('#basiclti_settings_debug:checked').val() !== null;
                 json["release_names@TypeHint"] = "Boolean";
                 json.release_names = $('#basiclti_settings_release_names:checked').val() !== null;
                 json["release_principal_name@TypeHint"] = "Boolean";
@@ -282,7 +282,6 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
                 json.tuidFrame = ""; // does not need to be persisted
                 json.defined = ""; // what the heck is this? Where does it come from?
                 json._MODIFIERS = null; // trimpath garbage - probably need a more selective way of saving data
-
                 saveContentAjax(json);
             }
             else if (json.ltiurl !== "") {
@@ -292,7 +291,7 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
                 json.ltikey = $(basicltiSettingsLtiKey).val() || "";
                 json.ltisecret = $(basicltiSettingsLtiSecret).val() || "";
                 json["debug@TypeHint"] = "Boolean";
-                json.debug = $('#basiclti_settings_debug:checked').val() !== null;
+                json.debug = false; //$('#basiclti_settings_debug:checked').val() !== null;
                 json["release_names@TypeHint"] = "Boolean";
                 json.release_names = $('#basiclti_settings_release_names:checked').val() !== null;
                 json["release_principal_name@TypeHint"] = "Boolean";
