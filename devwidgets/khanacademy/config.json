@@ -1,0 +1,21 @@
+{
+    "sakaidocs": true,
+    "ca":true,
+    "hasSettings": false,
+    "description":"Khan Academy",
+    "id":"khanacademy",
+    "i18n": {
+        "default": "/devwidgets/sakai2tools/bundles/default.properties"
+    },
+    "img":"/devwidgets/sakai2tools/images/sakai2tools.png",
+    "name":"Khan Academy",
+    "type":"sakai",
+    "enabled":true,
+    "url":"/devwidgets/khanacademy/sakai2tools.html",
+    "userpages": true,
+    "userdashboard": true,
+    "grouppages": true,
+    "groupdashboard": true,
+    "showinsakaigoodies":true,
+    "personalportal":true
+}
