@@ -54,7 +54,7 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
         var defaultHeight = 200;
 
         // Links and labels
-        var basiclti = "#basiclti";
+        var basiclti = "#etherpad";
         var basicltiSettings = basiclti + "_settings";
         var basicltiSettingsAdvanced = basicltiSettings + "_advanced";
         var basicltiSettingsAdvancedDown = basicltiSettingsAdvanced + "_down";
@@ -82,9 +82,9 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
         var basicltiSettingsWidthUnitSelectedClass = "basiclti_settings_width_unit_selected";
 
         // Templates
-        var $basicltiSettingsColorContainerTemplate = $("#basiclti_settings_color_container_template", rootel);
-        var $basicltiSettingsTemplate = $("#basiclti_settings_template", rootel);
-        var $basicltiSettingsPreviewTemplate = $("#basiclti_settings_preview_template", rootel);
+        var $basicltiSettingsColorContainerTemplate = $("#etherpad_settings_color_container_template", rootel);
+        var $basicltiSettingsTemplate = $("#etherpad_settings_template", rootel);
+        var $basicltiSettingsPreviewTemplate = $("#etherpad_settings_preview_template", rootel);
 
         // see: http://www.ietf.org/rfc/rfc2396.txt Appendix B
         var urlRegExp = new RegExp("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
@@ -366,7 +366,7 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
 
             // Toggle the advanced view
             $(basicltiSettingsAdvancedToggleSettings).click(function(){
-                $("#basiclti_settings_advanced", rootel).toggle();
+                $("#etherpad_settings_advanced", rootel).toggle();
                 isAdvancedSettingsVisible = !isAdvancedSettingsVisible;
                 changeAdvancedSettingsArrow();
             });
@@ -386,13 +386,13 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
             });
 
             // When you push the save button..
-            $(basicltiSettingsInsert).click(function(){
+            $(basicltiSettingsInsert, rootel).click(function(){
                 saveRemoteContent();
             });
 
             // Cancel it
             $(basicltiSettingsCancel).click(function(){
-                sakai.api.Widgets.Container.informCancel(tuid, "basiclti");
+                sakai.api.Widgets.Container.informCancel(tuid, "etherpad");
             });
 
             addColorBinding();
