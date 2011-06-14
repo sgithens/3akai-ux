@@ -5,7 +5,7 @@
     },
     "id":"mysakai2",
     "name":"My Sakai 2 favourites",
-    "personalportal":false,
+    "personalportal":true,
     "type":"sakai",
     "enabled":true,
     "hasSettings":false,

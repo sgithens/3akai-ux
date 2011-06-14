@@ -37,7 +37,7 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
      * @param {String} tuid Unique id of the widget
      * @param {Boolean} showSettings Show the settings of the widget or not
      */
-    sakai_global.sakai2tools = function(tuid, showSettings){
+    sakai_global.gradebook = function(tuid, showSettings){
 
 
         /////////////////////////////
@@ -54,7 +54,7 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
         var defaultHeight = 200;
 
         // Links and labels
-        var basiclti = "#sakai2tools";
+        var basiclti = "#gradebook";
         var basicltiSettings = basiclti + "_settings";
         var basicltiSettingsAdvanced = basicltiSettings + "_advanced";
         var basicltiSettingsAdvancedDown = basicltiSettingsAdvanced + "_down";
@@ -82,9 +82,9 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
         var basicltiSettingsWidthUnitSelectedClass = "basiclti_settings_width_unit_selected";
 
         // Templates
-        var $basicltiSettingsColorContainerTemplate = $("#sakai2tools_settings_color_container_template", rootel);
-        var $basicltiSettingsTemplate = $("#sakai2tools_settings_template", rootel);
-        var $basicltiSettingsPreviewTemplate = $("#sakai2tools_settings_preview_template", rootel);
+        var $basicltiSettingsColorContainerTemplate = $("#gradebook_settings_color_container_template", rootel);
+        var $basicltiSettingsTemplate = $("#gradebook_settings_template", rootel);
+        var $basicltiSettingsPreviewTemplate = $("#gradebook_settings_preview_template", rootel);
 
         // see: http://www.ietf.org/rfc/rfc2396.txt Appendix B
         var urlRegExp = new RegExp("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
@@ -264,7 +264,7 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
             };
 
             if (isSakai2Tool()) {
-                json["lti_virtual_tool_id"] = $('#sakai2tools_settings_lti_virtual_tool_id').val();    
+                json["lti_virtual_tool_id"] = "sakai.gradebook.tool"; //$('#basiclti_settings_lti_virtual_tool_id').val();    
 
                 json[":operation"] = "basiclti";
                 json["sling:resourceType"] = "sakai/basiclti";
@@ -335,7 +335,7 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
          * Add binding to the color boxes
          */
         var addColorBinding = function(){
-            $(".basiclti_settings_color").click(function(){
+            $(".gradebook_settings_color").click(function(){
                 json.border_color = $(this).attr("id").split("_")[$(this).attr("id").split("_").length - 1];
                 renderIframeSettings(false);
                 renderColorContainer();
@@ -392,7 +392,7 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
 
             // Toggle the advanced view
             $(basicltiSettingsAdvancedToggleSettings).click(function(){
-                $("#basiclti_settings_advanced", rootel).toggle();
+                $("#gradebook_settings_advanced", rootel).toggle();
                 isAdvancedSettingsVisible = !isAdvancedSettingsVisible;
                 changeAdvancedSettingsArrow();
             });
@@ -418,7 +418,7 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
 
             // Cancel it
             $(basicltiSettingsCancel).click(function(){
-                sakai.api.Widgets.Container.informCancel(tuid, "basiclti");
+                sakai.api.Widgets.Container.informCancel(tuid, "gradebook");
             });
 
             addColorBinding();
@@ -505,5 +505,5 @@ require(["jquery", "sakai/sakai.api.core", "sakai/sakai.api.widgets"], function(
         getRemoteContent();
     };
 
-    sakai.api.Widgets.widgetLoader.informOnLoad("sakai2tools");
+    sakai.api.Widgets.widgetLoader.informOnLoad("gradebook");
 });
