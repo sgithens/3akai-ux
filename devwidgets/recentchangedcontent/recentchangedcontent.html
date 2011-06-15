@@ -2,7 +2,7 @@
 <link rel="stylesheet" type="text/css" href="/devwidgets/recentchangedcontent/css/recentchangedcontent.css" />
 
 <div class="recentchangedcontent_widget">
-    <div class="fl-widget-content s3d-widget-content recentchangedcontent_content">
+    <div class="recentchangedcontent_content">
         <div class="recentchangedcontent_add_container">
             <div id="recentchangedcontent_no_results_container" style="display:none;">
                 <div class="s3d-no-results-container">
@@ -21,7 +21,7 @@
                     <div class="recentchangedcontent_item_img fl-force-left">
                         <a href="/content#p=${item.link}/${item.filename}" title="${item.name}">
                             {if item.thumbnail}
-                                <img class="s3d-icon-50" src="${item.thumbnail} alt="${item.mimeTypeDescription}" />
+                                <img class="s3d-icon-50" src="${item.thumbnail}" alt="${item.mimeTypeDescription}" />
                             {elseif (item.mimeType.substring(0,6)=="image/")}
                                 <img class="s3d-icon-50" src="${item.path}" alt="${item.mimeTypeDescription}" />
                             {elseif sakai.config.MimeTypes[item.mimeType]}
@@ -60,7 +60,6 @@
                             <p>${item.comment.comment}</p>
                         </div>
                     </div>
-                    <div class="recentchangedcontent_item_border"></div>
                     {/if}
 
                     {if item.relatedContent}
@@ -70,7 +69,7 @@
                         <a href="/content#p=${item.relatedContent['_path']}/${item.relatedContent.filename}" title="${item.relatedContent.name}">
                             <span>
                                 {if item.relatedContent.thumbnail}
-                                    <img class="s3d-icon-32" src="${item.relatedContent.thumbnail} alt="${item.relatedContent.mimeTypeDescription}" />
+                                    <img class="s3d-icon-32" src="${item.relatedContent.thumbnail}" alt="${item.relatedContent.mimeTypeDescription}" />
                                 {elseif (item.relatedContent.mimeType.substring(0,6)=="image/")}
                                     <img class="s3d-icon-32" src="${item.relatedContent.path}" alt="${item.relatedContent.mimeTypeDescription}" />
                                 {elseif sakai.config.MimeTypes[item.relatedContent.mimeType]}
@@ -91,15 +90,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="recentchangedcontent_item_border"></div>
                     {/if}
                 </div>
             {/for}
-            <div class="recentchangedcontent_button">
-                <a class="recentchangedcontent_item_link s3d-widget-links" href="/dev/me.html#l=library" title="__MSG__SEE_ALL_MY_CONTENT__">
-                    __MSG__SEE_ALL_MY_CONTENT__
-                </a>
-            </div>
             --></div>
         </div>
     </div>
@@ -119,8 +112,8 @@
         </a>
     --></div>
 
-    <div class="s3d-widget-no-options">
-        <div class="s3d-widget-no-options-inner"></div>
+    <div class="s3d-widget-footer">
+        <a class="recentchangedcontent_item_link s3d-widget-links" href="/dev/me.html#l=library" title="__MSG__SEE_ALL_MY_CONTENT__">__MSG__SEE_ALL_MY_CONTENT__</a>
     </div>
 
 </div>

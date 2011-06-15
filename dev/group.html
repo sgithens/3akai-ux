@@ -33,9 +33,7 @@
         <div class="fl-container-flex">
             <div class="fl-fix fl-centered fixed-container s3d-main-container s3d-twocolumn">
                 <div class="s3d-page-column-left">
-                    <button style="display:none;" type="button" class="s3d-button s3d-button-link-2-state" id="group_create_new_area">
-                        <span class="s3d-button-inner s3d-button-link-2-state-inner">Add a new area</span>
-                    </button>
+                    <button type="button" id="group_create_new_area" class="s3d-button s3d-header-button s3d-header-smaller-button" style="display:none;">+ Add a new area</button>
                     <div id="widget_addarea" class="widget_inline"></div>
                     <div id="widget_lhnavigation" class="widget_inline"></div>
                 </div>
@@ -59,12 +57,10 @@
         <!-- FOOTER WIDGET -->
         <div id="widget_footer" class="widget_inline footercontainer"></div>
 
-        <script type="text/javascript" src="/dev/lib/tinymce/tiny_mce.js"></script>
-
         <!-- Dependency JS -->
         <script data-main="/dev/lib/sakai/sakai.dependencies.js" src="/dev/lib/jquery/require.js"></script>
         <!-- GROUP JS -->
-        <script>require(["/dev/javascript/group2.js"]);</script>
+        <script>require(["/dev/lib/tinymce/tiny_mce_src.js", "/dev/javascript/group2.js"]);</script>
 
     </body>
 </html>

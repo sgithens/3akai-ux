@@ -90,7 +90,7 @@
                                         {var participantCount = i.counts.membersCount}
                                         {if participantCount > 0}
                                             <span class="searchgroups_result_detail_separator"> | </span>
-                                            <a class="s3d-regular-light-links" href="${i.homePath}" title="${participantCount} {if participantCount == 1} __MSG__PARTICIPANT__{else} __MSG__PARTICIPANTS__{/if}">${participantCount} {if participantCount == 1} __MSG__PARTICIPANT__{else} __MSG__PARTICIPANTS__{/if}</a>
+                                            <a class="s3d-regular-light-links" href="${i.homePath}#l=participants" title="${participantCount} {if participantCount == 1} __MSG__PARTICIPANT__{else} __MSG__PARTICIPANTS__{/if}">${participantCount} {if participantCount == 1} __MSG__PARTICIPANT__{else} __MSG__PARTICIPANTS__{/if}</a>
                                         {/if}
                                     </div>
                                     {if i["sakai:group-description-short"]}<div class="searchgroups_result_description">${i["sakai:group-description-short"]}</div>{/if}
@@ -98,7 +98,10 @@
                                         <div class="searchgroups_result_tags">
                                             <span class="searchgroups_result_icon searchgroups_result_tags_icon"></span>
                                             <p class="searchgroups_result_tags_list">
-                                                {for t in i["sakai:tags"]}{if t.split("/")[0] !== "directory"}{if t_index > 0} <span class="searchgroups_result_tags_dot"> &bull;</span>{/if} <a class="s3d-regular-light-links" href="/search#q=${t}" title="${t}">${t}</a>{/if}{/for}
+                                                {for t in i["sakai:tags"]}
+                                                    {if t_index > 0} <span class="searchgroups_result_tags_dot"> &bull;</span>{/if} 
+                                                    <a class="s3d-regular-light-links" href="/search#q=${t}" title="${t}">${t}</a>
+                                                {/for}
                                             </p>
                                         </div>
                                     {/if}
