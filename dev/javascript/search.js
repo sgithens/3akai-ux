@@ -51,6 +51,16 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
                         "_order": 0,
                         "_title": "People"
                      }
+                },
+		        "sakai2sites": {
+                    "_title": "Sakai 2",
+                    "_ref": "id1234567890",
+                    "_order": 3,
+                    "main": {
+                        "_ref": "id1234567890",
+                        "_order": 0,
+                        "_title": "Sakai 2"
+                    }
                 }
             },
             "id9574379429432": {
@@ -61,6 +71,9 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
             },
             "id49294509202": {
                 "page": "<div id='widget_searchpeople' class='widget_inline'></div>"
+            },
+            "id1234567890": {
+                "page": "<div id='widget_searchsakai2' class='widget_inline'></div>"
             }
         };
         
@@ -71,7 +84,7 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
             pubdata.structure0[category.id] = {
                 "_title": title,
                 "_ref": refId,
-                "_order": (c + 3),
+                "_order": (c + 4),
                 "main": {
                     "_ref": refId,
                     "_order": 0,
