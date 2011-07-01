@@ -37,6 +37,8 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
         // Configuration variables //
         /////////////////////////////
 
+        var resultsToDisplay = 10;
+
         var search = "#searchsakai2";
 
         var searchConfig = {
@@ -44,7 +46,8 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
             global: {
                 button: search + "_button",
                 text: search + '_text',
-                numberFound: search + '_numberFound'
+                numberFound: search + '_numberFound',
+                pagerClass: ".jq_pager"
             },
             results: {
                 container: search + '_results_container',
@@ -58,11 +61,6 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
                         "category": "All",
                         "searchurl": "",
                         "searchurlall": ""
-                    },
-                    "sweet stuff": {
-                        "category": "Stuff is sweet",
-                        "searchurl": "",
-                        "searchurlall": ""
                     }
                 }
             }
@@ -71,22 +69,6 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
         ///////////////////////
         // Utility functions //
         ///////////////////////
-
-        /**
-         *  This function check if item is already exists in the site list.
-         *  It check whether site is already in the sites.
-         * @param {String} sites The site lists json object
-         * @param {string} site The site object.
-         */
-        var isItemExists = function(sites, site){
-            var checking = false;
-            for(var i in sites) {
-                if(sites[i].id == site.id) {
-                    checking = true;
-                }
-            }
-            return checking;
-        };
 
         /**
          * This function loop through the site and check if search term is in the description or title
@@ -98,11 +80,11 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
             resultJson.sites = resultJson.sites || [];
             for(var j=0;j<category.sites.length;j++){ 
                 var site = category.sites[j];  
-                if(searchterm === "*" && !isItemExists(resultJson.sites,site)) {
+                if(searchterm === "*" ) {
                     resultJson.sites.push(site);
-                } else if(site.title.toLowerCase().search(searchterm) > -1 ) { //&& !isItemExists(resultJson.sites,site)) {
+                } else if(site.title.toLowerCase().search(searchterm) > -1 ) {
                     resultJson.sites.push(site);
-                } else if (site.description && site.description.toLowerCase().search(searchterm) > -1 ) { //&& !isItemExists(resultJson.sites,site)) {
+                } else if (site.description && site.description.toLowerCase().search(searchterm) > -1 ) {
                     resultJson.sites.push(site);
                 }
              }
@@ -121,7 +103,6 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
                 var cat = jsondata.categories[i];
                 facets[i] = { category: cat.category, "searchurl": "", "searchurlall": ""};
             }
-            //facets['what'] = { category: "what??", "searchurl": "", "searchurlall": ""};
         }
 
         /**
@@ -149,8 +130,15 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
         };
 
         /////////////////////////
-        // Main View functions //
+        // Functions           //
         /////////////////////////
+
+        var pager_click_handler = function(pageclickednumber){
+            $.bbq.pushState({
+                "q": $(searchConfig.global.text).val(),
+                "page": pageclickednumber
+            }, 0);
+        };
 
         /* 
          * Renders the results using the json as structured in 
@@ -176,10 +164,29 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
 
             filterSearch(qparams.q,categorydata,finaljson);
    
-            $(searchConfig.global.numberFound).text("" + finaljson.sites.length);
+            var resultstotal = finaljson.sites.length;
+            $(searchConfig.global.numberFound).text("" + resultstotal);
             
+            if (resultstotal > resultsToDisplay && qparams.page) {
+                var end = qparams.page * resultsToDisplay;
+                finaljson.sites = finaljson.sites.slice(end-resultsToDisplay,end);
+            }
+
             $(searchConfig.results.container).html(sakai.api.Util.TemplateRenderer(searchConfig.results.template, finaljson));
             $(searchConfig.results.container).show();
+
+
+            // Putting Pager Reset down here, otherwise I seem to be having
+            // timing issues with different things (facet, pager, etc) getting
+            // rendered.
+            $(searchConfig.global.pagerClass).pager({
+                pagenumber: qparams.page,
+                pagecount: Math.ceil(Math.abs(resultstotal) / resultsToDisplay),
+                buttonClickCallback: pager_click_handler
+            });
+            if (resultstotal > resultsToDisplay) {
+                $(searchConfig.global.pagerClass).show();
+            }
         };
 
         var doSearch = function(){
@@ -195,6 +202,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
         ////////////////////
         // Event Handlers //
         ////////////////////
+
 
         $(searchConfig.global.text).live("keydown", function(ev){ 
             if (ev.keyCode === 13) {
