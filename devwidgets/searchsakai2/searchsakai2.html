@@ -30,9 +30,6 @@
         </div>
         <div class="searchsakai2_results_faceted">
             <span id="searchsakai2_result_title" style="display:none;">__MSG__REFINE_YOUR_SEARCH__</span>
-            <!-- <span id="searchsakai2_result_all_content" style="display:none;">__MSG__ALL_CONTENT_I_CAN_SEE__</span>
-            <span id="searchsakai2_result_content_I_manage" style="display:none;">__MSG__CONTENT_I_CAN_EDIT__</span>
-            <span id="searchsakai2_result_content_I_m_a_viewer_of" style="display:none;">__MSG__CONTENT_SHARED_WITH_ME__</span> -->
         </div>
         <div id="searchsakai2_results" class="fl-container searchsakai2_results">
             <!-- SEARCH RESULTS -->
@@ -55,11 +52,11 @@
                 <!-- TEMPLATE CONTAINING THE RESULTS -->
                 <div id="searchsakai2_results_template"><!--
                     {for i in sites}
-                    <div class="fl-container fl-fix searchcontent_result">
-                        <a href="#">
-                            <img src="${sakai.config.MimeTypes["other"].URL}" alt="" />
+                    <div class="fl-container fl-fix searchsakai2_result">
+                        <a href="${i.url}">
+                            <img src="/dev/images/sakai2sites.png" alt="" />
                         </a>
-                        <div class="searchcontent_result_right">
+                        <div class="searchsakai2_result_right">
                             <div>
                                 <a class="s3d-bold s3d-regular-light-links" href="${i.url}" title="${i.title}">
                                     ${i.title}                                

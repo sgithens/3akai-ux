@@ -78,13 +78,14 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
          */
         var filterSearch = function(searchterm, category , resultJson) {
             resultJson.sites = resultJson.sites || [];
+            searchtermlower = searchterm.toLowerCase()
             for(var j=0;j<category.sites.length;j++){ 
                 var site = category.sites[j];  
                 if(searchterm === "*" ) {
                     resultJson.sites.push(site);
-                } else if(site.title.toLowerCase().search(searchterm) > -1 ) {
+                } else if(site.title.toLowerCase().search(searchtermlower) > -1 ) {
                     resultJson.sites.push(site);
-                } else if (site.description && site.description.toLowerCase().search(searchterm) > -1 ) {
+                } else if (site.description && site.description.toLowerCase().search(searchtermlower) > -1 ) {
                     resultJson.sites.push(site);
                 }
              }
@@ -108,7 +109,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
         /**
          * Get sites list group with categories from back end.
          */
-        var getCategories = function(){
+        var getCategories = function(callback){
             var url = "/dev/s23/bundles/sites-categorized.json";
             if (sakai.config.useLiveSakai2Feeds){
                 url = "/var/proxy/s23/sitesCategorized.json?categorized=true";
@@ -118,11 +119,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
                 type : "GET",
                 dataType: "json",
                 success: function(data){
-                    newjson = data;
-                    // Render all the sites.
-                    updateFacets(newjson);
-                    renderResults(newjson);
-                    //sakai_global._search.waitForFacets = false;
+                    callback(data);
                 },
                 error: function(){
                 }
@@ -190,7 +187,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
         };
 
         var doSearch = function(){
-            getCategories();
+            getCategories(function(data) {renderResults(data);});
         };
 
         /////////////////////////////
@@ -244,7 +241,13 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
         });
         
         // run the initialization function when the widget object loads
-        $(window).trigger("sakai.search.util.init");
+        // we're wrapping this up because we need to do an ajax call to Sakai2
+        // to determine the categories for the search facet
+        getCategories(function(data) {
+            updateFacets(data);
+            $(window).trigger("sakai.search.util.init");
+        });
+        
     };
 
     // inform Sakai OAE that this widget has loaded and is ready to run
