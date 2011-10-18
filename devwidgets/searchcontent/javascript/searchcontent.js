@@ -337,6 +337,8 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
             }
         });
 
+        sakai.api.Util.processMacros('/devwidgets/searchcontent/searchmacros.html');
+
         $(window).trigger("sakai.search.util.init", [{"tuid": tuid}]);
 
     };

@@ -1307,6 +1307,29 @@ define(
          */
         templateCache : [],
 
+        macroCache : { macros: {}},
+
+        processMacros : function (url) {
+            var mc = this.macroCache;
+            $.get(url, function(data) { 
+                mc._MODIFIERS = {
+                    safeURL: function(str) {
+                        return sakai_util.safeURL(str);
+                    },
+                    escapeHTML: function(str) {
+                        return sakai_util.Security.escapeHTML(str);
+                    },
+                    saneHTML: function(str) {
+                        return sakai_util.Security.saneHTML(str);
+                    },
+                    safeOutput: function(str) {
+                        return sakai_util.Security.safeOutput(str);
+                    }
+                }; 
+                data.process(mc);
+            });
+        },
+
         /**
         * Trimpath Template Renderer: Renders the template with the given JSON object, inserts it into a certain HTML
         * element if required, and returns the rendered HTML string
@@ -1387,6 +1410,7 @@ define(
                     return sakai_util.Security.safeOutput(str);
                 }
             };
+            templateData.macros = this.macroCache.macros;
 
             // Run the template and feed it the given JSON object
             var render = "";
@@ -1397,6 +1421,7 @@ define(
             }
 
             delete templateData._MODIFIERS;
+            delete templateData.macros;
 
             // Run the rendered html through the sanitizer
             if (sanitize) {
