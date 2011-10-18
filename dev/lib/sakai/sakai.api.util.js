@@ -30,12 +30,13 @@ define(
         "jquery",
         "sakai/sakai.api.server",
         "sakai/sakai.api.l10n",
+        "sakai/sakai.api.i18n",
         "config/config_custom",
         "misc/trimpath.template",
         "misc/underscore",
         "jquery-plugins/jquery.ba-bbq"
     ],
-    function($, sakai_serv, sakai_l10n, sakai_conf) {
+    function($, sakai_serv, sakai_l10n, sakai_i18n, sakai_conf) {
 
     var sakai_util = {
 
@@ -1325,8 +1326,8 @@ define(
                     safeOutput: function(str) {
                         return sakai_util.Security.safeOutput(str);
                     }
-                }; 
-                data.process(mc);
+                };
+                sakai_i18n.General.process(data).process(mc);
             });
         },
 
