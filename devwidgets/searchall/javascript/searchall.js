@@ -295,6 +295,8 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
 
         $(window).trigger("sakai.search.util.init", [{"tuid": tuid}]);
 
+        sakai.api.Util.processMacros('/devwidgets/searchcontent/searchmacros.html');
+
     };
 
     // inform Sakai OAE that this widget has loaded and is ready to run
