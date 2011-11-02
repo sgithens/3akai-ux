@@ -180,8 +180,12 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 json.tuidFrame = basicltiSettingsPreviewId;
                 $(basicltiMainContainer, rootel).html(sakai.api.Util.TemplateRenderer($basicltiSettingsPreviewTemplate, json));
                 json.launchDataUrl = sakai.api.Widgets.widgetLoader.widgets[tuid].placement + ".launch.html";
+                if (sakai_global.group) {
+                    json.launchDataUrl += "?groupid=" + sakai_global.group.groupData["sakai:group-id"];
+                }
+        alert(json.launchDataUrl);
                 $("#" + json.tuidFrame, rootel).attr("src", json.launchDataUrl); 
-
+                
                 // resize the iframe to match inner body height if in the same origin (i.e. same protocol/domain/port)
                 if(isSameOriginPolicy(window.location.href, json.ltiurl)) {
                     $(basicltiSettingsPreviewFrame, rootel).load(function() {
@@ -275,7 +279,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 json.ltikey = $(basicltiSettingsLtiKey,rootel).val() || "";
                 json.ltisecret = $(basicltiSettingsLtiSecret,rootel).val() || "";
                 json["debug@TypeHint"] = "Boolean";
-                json.debug = $('#basiclti_settings_debug:checked',rootel).val() !== null;
+                json.debug = true; //$('#basiclti_settings_debug:checked',rootel).val() !== null;
                 json["release_names@TypeHint"] = "Boolean";
                 json.release_names = $('#basiclti_settings_release_names:checked',rootel).val() !== null;
                 json["release_principal_name@TypeHint"] = "Boolean";
@@ -296,7 +300,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 json.ltikey = $(basicltiSettingsLtiKey,rootel).val() || "";
                 json.ltisecret = $(basicltiSettingsLtiSecret,rootel).val() || "";
                 json["debug@TypeHint"] = "Boolean";
-                json.debug = $('#basiclti_settings_debug:checked',rootel).val() !== null;
+                json.debug = true;// $('#basiclti_settings_debug:checked',rootel).val() !== null;
                 json["release_names@TypeHint"] = "Boolean";
                 json.release_names = $('#basiclti_settings_release_names:checked',rootel).val() !== null;
                 json["release_principal_name@TypeHint"] = "Boolean";
@@ -483,6 +487,12 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
          * view we are in, fill in the settings or display an iframe.
          */
         var getRemoteContent = function() {
+if (sakai_global.group) {
+    alert("Ok where are we: " + sakai_global.group.groupData["sakai:group-id"]);
+}
+else {
+    alert("We are *not* in a group");
+}
             sakai.api.Widgets.loadWidgetData(tuid, function(success,data){
                 if (success) {
                     if (showSettings) {
