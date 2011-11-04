@@ -1331,6 +1331,7 @@ define(
             });
         },
 
+        trimpathInit: false,
         /**
         * Trimpath Template Renderer: Renders the template with the given JSON object, inserts it into a certain HTML
         * element if required, and returns the rendered HTML string
@@ -1364,7 +1365,22 @@ define(
                 debug.log(templateElement);
                 throw "TemplateRenderer: The templateElement '" + templateElement + "' is not in a valid format or the template couldn't be found.";
             }
-
+var macroFilesToLoad = [];
+            if (this.trimpathInit === false) {
+                var origMacroPrefixFunc = TrimPath.parseTemplate_etc.statementDef.macro.prefixFunc;
+                
+                TrimPath.parseTemplate_etc.statementDef.macro.prefixFunc = function(stmtParts, state, tmplName, etc) {
+                    var macroName = stmtParts[1].split('(')[0];
+                    //alert("Creating macro: " + macroName);
+                    //macroFilesToLoad.push(macroName);  
+debug.log("Parsing Macro: " + macroName);
+                    return origMacroPrefixFunc(stmtParts, state, tmplName, etc);
+                }
+                this.trimpathInit = true;
+//alert("TRIMPATH INIT!");
+                
+            }
+//alert("Templates to load: " + macroFilesToLoad.length);
             if (!this.templateCache[templateName]) {
                 var templateNode = templateElement.get(0);
                 if (templateNode) {

@@ -1,7 +1,10 @@
+
 {macro helloMacros(stuff)}
   <h2>Hello there macro hmm! ${stuff|safeURL}</h2>
 {/macro}
 ${macros.helloMacro = helloMacros |eat}
+
+${macros.search = macros.search || Object() |eat}
 
 {macro searchContentItem(sakai,count,i)}
 <li class="fl-container fl-fix s3d-search-result-content s3d-search-result{if count == 1} s3d-search-result-first{/if}">
@@ -62,4 +65,5 @@ ${macros.helloMacro = helloMacros |eat}
                                 </div>
 </li>
 {/macro}
+
 ${macros.searchContentItem = searchContentItem |eat}
