@@ -56,7 +56,7 @@
                         {var count = count + 1}
                         {if i['sakai:pooled-content-file-name']}
                             {var resultFound = true}
-                            ${macros.searchContentItem(sakai,count,i)}
+                            ${macro('search.searchContentItem', sakai, count, i)}
                         {elseif i.userid}
                             {var resultFound = true}
                             <li class="fl-container fl-fix s3d-search-result-person s3d-search-result{if count == 1} s3d-search-result-first{/if}">

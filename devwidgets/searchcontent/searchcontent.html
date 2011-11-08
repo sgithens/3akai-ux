@@ -64,7 +64,7 @@
                         {var count = count + 1}
                         {if i['sakai:pooled-content-file-name']}
                             {var contentFound = true}
-                            ${macros.searchContentItem(sakai,count,i)}
+                            ${macro('search.searchContentItem', sakai, count, i)}
                         {/if}
                     {/for}
                     {if !contentFound}

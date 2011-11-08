@@ -1309,25 +1309,30 @@ define(
         templateCache : [],
 
         macroCache : { macros: {}},
+        
+        trimpathModifiers : {
+            safeURL: function(str) {
+                return sakai_util.safeURL(str);
+            },
+            escapeHTML: function(str) {
+                return sakai_util.Security.escapeHTML(str);
+            },
+            saneHTML: function(str) {
+                return sakai_util.Security.saneHTML(str);
+            },
+            safeOutput: function(str) {
+                return sakai_util.Security.safeOutput(str);
+            }
+        },
 
         processMacros : function (url) {
             var mc = this.macroCache;
-            $.get(url, function(data) { 
-                mc._MODIFIERS = {
-                    safeURL: function(str) {
-                        return sakai_util.safeURL(str);
-                    },
-                    escapeHTML: function(str) {
-                        return sakai_util.Security.escapeHTML(str);
-                    },
-                    saneHTML: function(str) {
-                        return sakai_util.Security.saneHTML(str);
-                    },
-                    safeOutput: function(str) {
-                        return sakai_util.Security.safeOutput(str);
-                    }
-                };
-                sakai_i18n.General.process(data).process(mc);
+            $.ajax({url: url, 
+                async: false, // We need to immediately return this value for on-demand loading.
+                success: function(data) { 
+                  mc._MODIFIERS = sakai_util.trimpathModifiers; 
+                  sakai_i18n.General.process(data).process(mc);
+                }
             });
         },
 
@@ -1365,22 +1370,7 @@ define(
                 debug.log(templateElement);
                 throw "TemplateRenderer: The templateElement '" + templateElement + "' is not in a valid format or the template couldn't be found.";
             }
-var macroFilesToLoad = [];
-            if (this.trimpathInit === false) {
-                var origMacroPrefixFunc = TrimPath.parseTemplate_etc.statementDef.macro.prefixFunc;
-                
-                TrimPath.parseTemplate_etc.statementDef.macro.prefixFunc = function(stmtParts, state, tmplName, etc) {
-                    var macroName = stmtParts[1].split('(')[0];
-                    //alert("Creating macro: " + macroName);
-                    //macroFilesToLoad.push(macroName);  
-debug.log("Parsing Macro: " + macroName);
-                    return origMacroPrefixFunc(stmtParts, state, tmplName, etc);
-                }
-                this.trimpathInit = true;
-//alert("TRIMPATH INIT!");
-                
-            }
-//alert("Templates to load: " + macroFilesToLoad.length);
+
             if (!this.templateCache[templateName]) {
                 var templateNode = templateElement.get(0);
                 if (templateNode) {
@@ -1413,21 +1403,26 @@ debug.log("Parsing Macro: " + macroName);
             if (templateData._MODIFIERS) {
                 debug.error("Someone has passed data to sakai.api.util.TemplateRenderer with _MODIFIERS");
             }
-            templateData._MODIFIERS = {
-                safeURL: function(str) {
-                    return sakai_util.safeURL(str);
-                },
-                escapeHTML: function(str) {
-                    return sakai_util.Security.escapeHTML(str);
-                },
-                saneHTML: function(str) {
-                    return sakai_util.Security.saneHTML(str);
-                },
-                safeOutput: function(str) {
-                    return sakai_util.Security.safeOutput(str);
+            templateData._MODIFIERS = sakai_util.trimpathModifiers;
+            templateData.macro = function() {
+                var macroname = arguments[0];
+                var args = []; 
+                for (var i = 1; i < arguments.length; i++) {
+                    args.push(arguments[i]);
+                }
+                if (!sakai_util.macroCache.macros[macroname]) {
+                    var dot = macroname.lastIndexOf('.');
+                    if (dot > -1) { 
+                        sakai_util.processMacros('/dev/macros/'+macroname.slice(0,dot)+'.html');
+                        if (sakai_util.macroCache.macros[macroname]) {
+                            return sakai_util.macroCache.macros[macroname].apply(this, args);
+                        }
+                    }
+                }
+                else {
+                    return sakai_util.macroCache.macros[macroname].apply(this, args);
                 }
             };
-            templateData.macros = this.macroCache.macros;
 
             // Run the template and feed it the given JSON object
             var render = "";
@@ -1438,7 +1433,7 @@ debug.log("Parsing Macro: " + macroName);
             }
 
             delete templateData._MODIFIERS;
-            delete templateData.macros;
+            delete templateData.macro;
 
             // Run the rendered html through the sanitizer
             if (sanitize) {
