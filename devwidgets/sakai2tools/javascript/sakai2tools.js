@@ -183,9 +183,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 if (sakai_global.group) {
                     json.launchDataUrl += "?groupid=" + sakai_global.group.groupData["sakai:group-id"];
                 }
-        alert(json.launchDataUrl);
                 $("#" + json.tuidFrame, rootel).attr("src", json.launchDataUrl); 
-                
+
                 // resize the iframe to match inner body height if in the same origin (i.e. same protocol/domain/port)
                 if(isSameOriginPolicy(window.location.href, json.ltiurl)) {
                     $(basicltiSettingsPreviewFrame, rootel).load(function() {
