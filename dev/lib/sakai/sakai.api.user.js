@@ -177,12 +177,16 @@ define(
             // callback function for response from batch request
             var bundleReqFunction = function(success, reqData){
                 var users = {};
-                for (var j in reqData.responseId) {
-                    if (reqData.responseId.hasOwnProperty(j) && reqData.responseData[j]) {
-                        users[reqData.responseId[j]] = $.parseJSON(reqData.responseData[j].body);
+                if (success && reqData) {
+                    for (var j in reqData.responseId) {
+                        if (reqData.responseId.hasOwnProperty(j) && reqData.responseData[j]) {
+                            users[reqData.responseId[j]] = $.parseJSON(reqData.responseData[j].body);
+                        }
                     }
                 }
-                callback(users);
+                if ($.isFunction(callback)) {
+                    callback(success, users);
+                }
             };
 
             for (var i in userArray) {
@@ -600,7 +604,6 @@ define(
                         callback(true, data);
                     }
                     if (sakai_global.profile && sakai_global.profile.main && sakai_global.profile.main.mode && sakai_global.profile.main.mode.value !== "view") {
-                        $(window).trigger("lhnav.updateCount", ["contacts", 1]);
                         $(window).trigger("contacts.accepted.sakai");
                     }
                 },
@@ -636,6 +639,9 @@ define(
                         success: function(data) {
                             if ($.isFunction(callback)) {
                                 callback(true, data);
+                            }
+                            if (sakai_global.profile && sakai_global.profile.main && sakai_global.profile.main.mode && sakai_global.profile.main.mode.value !== "view") {
+                                $(window).trigger("lhnav.updateCount", ["contacts", -1]);
                             }
                         },
                         error: function() {

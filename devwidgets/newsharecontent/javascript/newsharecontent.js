@@ -60,6 +60,8 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
         var $newsharecontentMessageToggle = $('label.toggletext',$newsharecontentContainer);
         var $newsharecontentMessageArrow = $('#newsharecontent_message_arrow');
         var $newsharecontentHeading = $('#newsharecontent_heading');
+        var $newsharecontentAnon = $('.newsharecontent_anon_function');
+        var $newsharecontentUser = $('.newsharecontent_user_function');
 
         // Classes
         var newsharecontentRequiredClass = "newsharecontent_required";
@@ -141,7 +143,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
             });
         };
 
-        var doShare = function(event,userlist,message,contentobj){
+        var doShare = function(event, userlist, message, contentobj){
             var userList = userlist || getSelectedList();
             var messageText = message || $.trim($newsharecontentMessage.val());
             contentObj = contentobj || contentObj;
@@ -152,7 +154,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
                 userList.list = toAddList;
                 if (toAddList.length) {
                     sakai.api.Communication.sendMessage(userList.list, sakai.data.me, sakai.api.i18n.getValueForKey("I_WANT_TO_SHARE", "newsharecontent") + " \"" + contentObj.data["sakai:pooled-content-file-name"] + "\"", messageText, "message", false, false, true, "shared_content");
-                    sakai.api.Content.addToLibrary(contentObj.data["_path"], toAddList);
+                    sakai.api.Content.addToLibrary(contentObj.data["_path"], toAddList, contentObj.data.canManage);
                     sakai.api.Util.notification.show(false, $("#newsharecontent_users_added_text").text() + " " + userList.toAddNames.join(", "), "");
                     createActivity("__MSG__ADDED_A_MEMBER__");
                     $newsharecontentContainer.jqmHide();
@@ -224,6 +226,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
         ////////////////////
 
         var init = function(){
+            if (!sakai.data.me.user.anon){
+                $newsharecontentAnon.hide();
+                $newsharecontentUser.show();
+            }
             addBinding();
             var ajaxcache = $.ajaxSettings.cache;
             $.ajaxSettings.cache = true;

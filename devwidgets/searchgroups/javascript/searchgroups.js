@@ -74,7 +74,8 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
                 tagTerm: search + "_mytagterm",
                 searchBarSelectedClass: "searchgroups_bar_selected",
                 pagerClass: ".jq_pager",
-                matchingLabel: "#searchgroups_result_extended_matching"
+                matchingLabel: "#searchgroups_result_extended_matching",
+                searchButton: "#form .s3d-search-button"
             },
             filters: {
                 filter: search + "_filter",
@@ -186,6 +187,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
             finaljson.category = selectedCategory.toLowerCase();
             finaljson.categoryid = selectedCategoryId;
             $(searchConfig.results.container, rootel).html(sakai.api.Util.TemplateRenderer(searchConfig.results.template, finaljson));
+            bindResultsEvents();
         };
 
         /**
@@ -211,7 +213,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
             $(searchConfig.global.pagerClass, rootel).hide();
 
             var params = sakai_global.data.search.getQueryParams();
-            var urlsearchterm = sakai.api.Server.createSearchString(params.q);
+            var urlsearchterm = sakai.api.Server.createSearchString(params.cat || params.q);
 
             var facetedurl = "";
             var facetedurlall = "";
@@ -247,10 +249,10 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
 
             if (urlsearchterm === '**' || urlsearchterm === '*') {
                 url = facetedurlall;
-                $(window).trigger("lhnav.addHashParam", [{"q": ""}]);
+                $(window).trigger("lhnav.addHashParam", [{"q": "", "cat": ""}]);
             } else {
                 url = facetedurl;
-                $(window).trigger("lhnav.addHashParam", [{"q": params.q}]);
+                $(window).trigger("lhnav.addHashParam", [{"q": params.q, "cat": params.cat}]);
             }
 
             searchAjaxCall = $.ajax({
@@ -277,17 +279,56 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
             if (ev.keyCode === 13) {
                 $.bbq.pushState({
                     "q": $(searchConfig.global.text, rootel).val(),
+                    "cat": "",
                     "page": 0
                 }, 0);
             }
         });
 
-        $(searchConfig.global.button, rootel).live("click", function(ev){
+        $(searchConfig.global.searchButton, rootel).live("click", function(ev){
             $.bbq.pushState({
                 "q": $(searchConfig.global.text, rootel).val(),
                 "page": 0
             }, 0);
         });
+
+        $(searchConfig.global.button, rootel).live("click", function(ev){
+            $.bbq.pushState({
+                "q": $(searchConfig.global.text, rootel).val(),
+                "cat": "",
+                "page": 0
+            }, 0);
+        });
+        
+        /*
+         * Bindings that occur after we've rendered the search results.
+         */
+        var bindResultsEvents = function() {
+            $('.searchgroups_result_plus',rootel).live("click", function(ev) {
+                var joinable = $(this).data("group-joinable");
+                var groupid = $(this).data("groupid");
+                var itemdiv = $(this);
+                sakai.api.Groups.addJoinRequest(sakai.data.me, groupid, false, true, function (success) {
+                    if (success) {
+                        if (joinable === "withauth") {
+                            // Don't add green tick yet because they need to be approved.
+                            var notimsg = sakai.api.i18n.getValueForKey("YOUR_REQUEST_HAS_BEEN_SENT");
+                        } 
+                        else  { // Everything else should be regular success
+                            $("#searchgroups_memberimage_"+groupid,rootel).show();
+                            var notimsg = sakai.api.i18n.getValueForKey("SUCCESSFULLY_ADDED_TO_GROUP");
+                        }
+                        sakai.api.Util.notification.show(sakai.api.i18n.getValueForKey("GROUP_MEMBERSHIP"),
+                            notimsg, sakai.api.Util.notification.type.INFORMATION);
+                        itemdiv.removeClass("s3d-action-icon s3d-actions-addtolibrary searchgroups_result_plus");
+                    } else {
+                        sakai.api.Util.notification.show(sakai.api.i18n.getValueForKey("GROUP_MEMBERSHIP"),
+                            sakai.api.i18n.getValueForKey("PROBLEM_ADDING_TO_GROUP"),
+                            sakai.api.Util.notification.type.ERROR);
+                    }
+                });
+            });
+        };
 
         /////////////////////////
         // Initialise Function //

@@ -21,6 +21,7 @@ define(function(){
             // Static URLs
             GATEWAY_URL: "/",
             GROUP_DEFAULT_ICON_URL: "/dev/images/group_avatar_icon_64x64_nob.png",
+            GROUP_DEFAULT_ICON_URL_LARGE: "/dev/images/group_avatar_icon_100x100_nob.png",
             I10N_BUNDLE_URL: "/dev/lib/misc/l10n/cultures/globalize.culture.__CODE__.js",
             I18N_BUNDLE_ROOT: "/dev/bundle/",
             INBOX_URL: "/me#l=messages/inbox",
@@ -31,6 +32,8 @@ define(function(){
             SEARCH_ACTIVITY_ALL_URL: "/var/search/activity/all.json",
             TINY_MCE_CONTENT_CSS: "/dev/css/FSS/fss-base.css,/dev/css/sakai/main.css,/dev/css/sakai/sakai.corev1.css,/dev/css/sakai/sakai.base.css,/dev/css/sakai/sakai.editor.css,/dev/css/sakai/sakai.content_profile.css",
             USER_DEFAULT_ICON_URL: "/dev/images/default_User_icon_50x50.png",
+            USER_DEFAULT_ICON_URL_LARGE: "/dev/images/default_User_icon_100x100.png",
+            INFINITE_LOADING_ICON: "/dev/images/Infinite_Scrolling_Loader_v01.gif",
 
             // Services
             BATCH: "/system/batch",
@@ -578,6 +581,10 @@ define(function(){
         // that needs to redirect the user's browser on logout
         followLogoutRedirects: false,
 
+        // Set this to the hostname of your CLE instance if you're using CAS
+        // proxy tickets
+        hybridCasHost: false,
+
         Messages: {
             Types: {
                 inbox: "inbox",
@@ -608,10 +615,13 @@ define(function(){
             "pptx":"application/vnd.ms-powerpoint",
             "odg":"image/jpeg",
             "png":"image/png",
+            "jp2":"images/jp2",
             "jpg":"image/jpeg",
             "jpeg":"image/jpeg",
             "bmp":"image/bmp",
             "gif":"image/gif",
+            "tif":"image/tiff",
+            "tiff":"images/tiff",
             "pdf":"application/x-pdf",
             "swf":"application/x-shockwave-flash",
             "flv":"video/x-msvideo",
@@ -626,6 +636,8 @@ define(function(){
             "html":"text/html",
             "wav": "audio/x-wav",
             "mp3": "audio/mpeg",
+            "tar": "application/zip",
+            "zip": "application/zip",
             "other":"other"
         },
         MimeTypes: {
@@ -734,6 +746,11 @@ define(function(){
                 URL: "/dev/images/mimetypes/images.png",
                 description: "GIF_IMAGE"
             },
+            "image/jp2": {
+                cssClass: "icon-image-sprite",
+                URL: "/dev/images/mimetypes/images.png",
+                description: "JPG2000_IMAGE"
+            },
             "image/jpeg": {
                 cssClass: "icon-image-sprite",
                 URL: "/dev/images/mimetypes/images.png",
@@ -743,6 +760,11 @@ define(function(){
                 cssClass: "icon-image-sprite",
                 URL: "/dev/images/mimetypes/images.png",
                 description: "JPG_IMAGE"
+            },
+            "image/tiff": {
+                cssClass: "icon-image-sprite",
+                URL: "/dev/images/mimetypes/images.png",
+                description: "TIFF_IMAGE"
             },
             "text/html": {
                 cssClass: "icon-html-sprite",
@@ -783,6 +805,16 @@ define(function(){
                 cssClass: "icon-sakaidoc-sprite",
                 URL: "/dev/images/mimetypes/sakaidoc.png",
                 description: "DOCUMENT"
+            },
+            "kaltura/video": {
+                cssClass: "icon-video-sprite",
+                URL: "/dev/images/mimetypes/video.png",
+                description: "VIDEO_FILE"
+            },
+            "kaltura/audio": {
+                cssClass: "icon-sound-sprite",
+                URL: "/dev/images/mimetypes/sound.png",
+                description: "SOUND_FILE"
             },
             "other": {
                 cssClass: "icon-unknown-sprite",
@@ -915,11 +947,11 @@ define(function(){
         Footer: {
             leftLinks: [{
                 "title": "__MSG__COPYRIGHT__",
-                "href": "http://sakaiproject.org",
+                "href": "http://sakaiproject.org/foundation-licenses",
                 "newWindow": true
             }, {
                 "title": "__MSG__HELP__",
-                "href": "http://sakaiproject.org",
+                "href": "http://sakaiproject.org/node/2307",
                 "newWindow": true
             }, {
                 "title": "__MSG__ACKNOWLEDGEMENTS__",
@@ -971,6 +1003,17 @@ define(function(){
 
         showSakai2: false,
         useLiveSakai2Feeds: false,
+        /*
+         * List of custom CLE Tool names. This can be used to override the translated
+         * tool name in the Sakai 2 Tools Widget drop down, or name a custom CLE tool
+         * that has been added to your CLE installation. You can see the list of
+         * enabled CLE tools at /var/basiclti/cletools.json, and configure them in
+         * Nakamura under the org.sakaiproject.nakamura.basiclti.CLEVirtualToolDataProvider
+         * configuration.
+         */
+        sakai2ToolNames: {
+            /* "sakai.mytoolId" : "My Custom Tool Title" */
+        },
 
         displayDebugInfo: true,
 
@@ -980,7 +1023,7 @@ define(function(){
          *  divider1: {
          *      "divider": true,
          *      "title": "Divider title" [optional],
-         *      "class": "CSS class to add to items inside of elements beneath the divider [optional]
+         *      "cssClass": "CSS class to add to items inside of elements beneath the divider [optional]
          *  }
          */
         Directory: {
@@ -3165,9 +3208,9 @@ define(function(){
             },
             {
                 id: "research",
-                title : "RESEARCH",
-                menuLabel : "CREATE_RESEARCH",
-                titleSing: "RESEARCH",
+                title : "RESEARCH_PROJECTS",
+                menuLabel : "CREATE_A_RESEARCH_PROJECT",
+                titleSing: "RESEARCH_PROJECT",
                 templates: [
                     {
                         id: "researchproject",

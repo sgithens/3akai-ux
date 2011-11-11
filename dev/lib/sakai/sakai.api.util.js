@@ -282,36 +282,6 @@ define(
 
         tagEntity : function(tagLocation, newTags, currentTags, callback) {
             var setTags = function(tagLocation, tags, setTagsCallback) {
-                if (tags.length) {
-                    var requests = [];
-                    $(tags).each(function(i, val){
-                        requests.push({
-                            "url": "/tags/" + val,
-                            "method": "POST",
-                            "parameters": {
-                                "sakai:tag-name": val,
-                                "sling:resourceType": "sakai/tag"
-                            }
-                        });
-                    });
-                    sakai_serv.batch(requests, function(success, data) {
-                        if (success) {
-                            doSetTags(tags, function(_success) {
-                                setTagsCallback(_success);
-                            });
-                        } else {
-                            debug.error(val + " failed to be created");
-                            if ($.isFunction(setTagsCallback)) {
-                                setTagsCallback();
-                            }
-                        }
-                    }, false, true);
-                } else {
-                    if ($.isFunction(setTagsCallback)) {
-                        setTagsCallback();
-                    }
-                }
-
                 // set the tag on the entity
                 var doSetTags = function(tags, doSetTagsCallback) {
                     var setTagsRequests = [];
@@ -334,6 +304,17 @@ define(
                         }
                     }, false, true);
                 };
+
+                if (tags.length) {
+                    doSetTags(tags, function(_success) {
+                        setTagsCallback(_success);
+                    });
+                } else {
+                    if ($.isFunction(setTagsCallback)) {
+                        setTagsCallback();
+                    }
+                }
+
             };
 
             /**
@@ -343,6 +324,7 @@ define(
              * @param (Array) tags Array of tags to be deleted from the entity
              * @param (Function) callback The callback function
              */
+
 
             var deleteTags = function(tagLocation, tags, deleteTagsCallback) {
                 if (tags.length) {
@@ -1303,6 +1285,20 @@ define(
         },
 
         /**
+         * Convert a string into something that is safe to put into an HTML attribute.
+         * This is made available as a modifier to TrimPath templates, as we can't call
+         * the .data() function of jQuery whilst rendering a template
+         * @param {Object} str    String to be transformed into a string safe for use in an attribute
+         */
+        saneHTMLAttribute: function(str) {
+            if (str) {
+                return sakai_util.Security.safeOutput(str.replace(/"/g, "\\\"").replace(/'/g, "\\\'"));
+            } else {
+                return "";
+            }
+        },
+
+        /**
          * A cache that will keep a copy of every template we have parsed so far. Like this,
          * we avoid having to parse the same template over and over again.
          */
@@ -1701,7 +1697,7 @@ define(
                 // Put the title inside the page
                 var pageTitle = require("sakai/sakai.api.i18n").getValueForKey(sakai_conf.PageTitles.prefix);
                 if (sakai_conf.PageTitles.pages[window.location.pathname]){
-                    pageTitle += require("sakai/sakai.api.i18n").getValueForKey(sakai_conf.PageTitles.pages[window.location.pathname]);
+                    pageTitle += " " + require("sakai/sakai.api.i18n").getValueForKey(sakai_conf.PageTitles.pages[window.location.pathname]);
                 }
                 document.title = pageTitle;
                 // Show the actual page content
