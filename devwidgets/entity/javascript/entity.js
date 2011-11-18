@@ -406,6 +406,12 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             $('#entity_name').html(sakai.api.Security.safeOutput(title));
         });
 
+        $(window).bind("sakai.entity.updateOwnCounts", function(e) {
+            $(window).trigger("load.content_profile.sakai", function() {
+                alert("You just reloaded the content profile!");
+            }, false);
+        });
+
         $(window).trigger("sakai.entity.ready");
 
     };

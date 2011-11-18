@@ -193,13 +193,13 @@
     <span id="entity_name_edit" style="display:none">
         <input id="entity_name_text" type="text" />
     </span>
-    <div id="entity_owns" class="s3d-regular-links">
+    {macro entityContentOwnsMacro(data,sakai)}
         {var peopleCount = data.members.counts.people}
         {var groupCount = data.members.counts.groups}
         {if peopleCount || groupCount}
             <div class="entity_number">
                 <div id="entity_used_by_icon" class="entity_content_details_icon"></div>
-                 __MSG__USED_BY__
+                 __MSG__USED_BY__ Oh shit
                  {if peopleCount}
                      <a href="#" title="${peopleCount} {if peopleCount == 1} __MSG__PERSON_LC__{else} __MSG__PEOPLE_LC__{/if}" class="entity_content_people">
                          ${peopleCount}
@@ -233,8 +233,7 @@
                     + ${groupCount + peopleCount - 1}
                     {if (peopleCount + groupCount - 1) === 1}
                         __MSG__OTHER__
-                    {else}
-                        __MSG__OTHERS__
+                    {else}                        __MSG__OTHERS__
                     {/if}
                 {/if}
             {elseif permissions == "everyone"}
@@ -243,6 +242,9 @@
                 __MSG__VISIBLE_TO_ANYONE__
             {/if}
         </div>
+    {/macro}
+    <div id="entity_owns" class="s3d-regular-links">
+        ${entityContentOwnsMacro(data,sakai)}
     </div>
 --></div>
 
