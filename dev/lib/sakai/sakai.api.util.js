@@ -1364,7 +1364,26 @@ define(
             });
         },
 
-        trimpathInit: false,
+        processLocalMacros : function(templateElement) {
+            var templateStr = "";
+            if (templateElement instanceof jQuery){
+                var firstNode = templateElement.get(0).firstChild;
+                if (firstNode && (firstNode.nodeType === 8 || firstNode.nodeType === 4)) {
+                    templateStr = firstNode.data.toString();
+                }
+                else {
+                    templateStr = templateElement.get(0).innerHTML.toString();
+                }
+            }
+            else if (typeof templateElement === "string") {
+                templateStr = templateElement;
+            }
+            var contextdata = { macros: {} };
+            contextdata._MODIFIERS = sakai_util.trimpathModifiers;
+            sakai_i18n.General.process(templateStr).process(contextdata);
+            return contextdata.macros;
+        },
+
         /**
         * Trimpath Template Renderer: Renders the template with the given JSON object, inserts it into a certain HTML
         * element if required, and returns the rendered HTML string

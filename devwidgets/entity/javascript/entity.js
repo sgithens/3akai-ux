@@ -269,6 +269,7 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                 getParentGroups(sakai_global.content_profile.content_data.members.managers.concat(sakai_global.content_profile.content_data.members.viewers), true, context);
             }
             context.sakai = sakai;
+            context.entitymacros = sakai.api.Util.processLocalMacros($("#entity_macros_template"));
             $(entityContainer).html(sakai.api.Util.TemplateRenderer("entity_" + context.context + "_template", context));
         };
 
