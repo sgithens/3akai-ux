@@ -169,6 +169,14 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
             });
         });
 
+        $(window).bind("sakai.entity.updateOwnCounts", function(e, context) {
+            alert("Freakin' rad!"); alert(context.contentId);
+            // $(window).trigger("load.content_profile.sakai", function() {
+            //     prepareRenderContext(renderObj);
+            //     $("#entity_owns").html(sakai.api.Util.TemplateRenderer("entity_counts_template", renderObj));
+            // }, false);
+        });
+
         /////////////////////////
         // Util initialisation //
         /////////////////////////
