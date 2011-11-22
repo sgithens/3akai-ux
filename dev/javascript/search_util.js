@@ -170,7 +170,10 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
         });
 
         $(window).bind("sakai.entity.updateOwnCounts", function(e, context) {
-            alert("Freakin' rad!"); alert(context.contentId);
+            alert("Freakin' rad 2!"); alert(context.contentId);
+            sakai.api.Server.loadJSON('/p/jy9mjaTCo.infinity.json',function(success,data) {
+                alert(data);
+            });
             // $(window).trigger("load.content_profile.sakai", function() {
             //     prepareRenderContext(renderObj);
             //     $("#entity_owns").html(sakai.api.Util.TemplateRenderer("entity_counts_template", renderObj));

@@ -1353,10 +1353,13 @@ define(
           * syncronously. Default is true (async)
           */
         processMacros : function (url, asyncreq) {
-            var asyncreq = asyncreq || true;
+            var asyncsetting = true;
+            if (asyncreq) {
+                asyncsetting = asyncreq;
+            }
             var mc = this.macroCache;
             $.ajax({url: url, 
-                async: asyncreq, // We need to immediately return this value for on-demand loading.
+                async: asyncsetting, // Sometimes we need to immediately return this value for on-demand loading.
                 success: function(data) { 
                   mc._MODIFIERS = sakai_util.trimpathModifiers; 
                   sakai_i18n.General.process(data).process(mc);
@@ -1364,15 +1367,32 @@ define(
             });
         },
 
+        /**
+          * While the processMacros function allows a way to make macros that can
+          * be shared and discovered between widgets automatically, this function
+          * allows for a simpler use case where a widget developer may just want some
+          * macros for their specific widget. In this case they can put all their
+          * macros in a template element ( similar to regular template elements),
+          * and then get a macro set back that can be used in between the rest of
+          * the templates they have defined in their page. 
+          *
+          * @param {String|jQuery} Raw String or jQuery element containing the 
+          * text of the macro definitions.
+          * @return An object containing the macro functions. This can be added to the
+          * context of subsequent TemplateRenderers and called like regular trimpath
+          * macros.
+          */
         processLocalMacros : function(templateElement) {
             var templateStr = "";
             if (templateElement instanceof jQuery){
-                var firstNode = templateElement.get(0).firstChild;
-                if (firstNode && (firstNode.nodeType === 8 || firstNode.nodeType === 4)) {
-                    templateStr = firstNode.data.toString();
-                }
-                else {
-                    templateStr = templateElement.get(0).innerHTML.toString();
+                if (templateElement.get(0)) {   
+                    var firstNode = templateElement.get(0).firstChild;
+                    if (firstNode && (firstNode.nodeType === 8 || firstNode.nodeType === 4)) {
+                        templateStr = firstNode.data.toString();
+                    }
+                    else {
+                        templateStr = templateElement.get(0).innerHTML.toString();
+                    }
                 }
             }
             else if (typeof templateElement === "string") {
