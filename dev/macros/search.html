@@ -1,5 +1,4 @@
-{macro listContent(i, sakai, i_index)}
-    <li id="${i.id}" class="fl-container fl-fix s3d-search-result-content s3d-search-result{if i_index === "0"} s3d-search-result-first{/if}">
+{macro listContentBody(i, sakai)}
         <span class="s3d-search-result-user-functions">
             <button class="s3d-link-button s3d-action-icon s3d-actions-addtolibrary searchcontent_result_left_filler savecontent_trigger" data-entityid="${i['_path']}" title="__MSG__SAVE__{if i['sakai:pooled-content-file-name']} ${i['sakai:pooled-content-file-name']}{elseif i['_path']} ${i['_path']}{/if}"></button>
             <button class="s3d-link-button s3d-action-icon s3d-actions-author searchcontent_result_author_icon personinfo_trigger_click" data-userid="${i['sakai:pool-content-created-for']|safeOutput}" title="__MSG__VIEW_OWNER_INFO_FOR__{if i['sakai:pooled-content-file-name']} ${i['sakai:pooled-content-file-name']}{elseif i['_path']} ${i['_path']}{/if}"></button>
@@ -68,6 +67,11 @@
                 {/if}
             </div>
         </div>
+{/macro}
+${macros["search.listContentBody"] = listContentBody |eat}
+{macro listContent(i, sakai, i_index)}
+    <li id="${i.id}" class="fl-container fl-fix s3d-search-result-content s3d-search-result{if i_index === "0"} s3d-search-result-first{/if}">
+      ${listContentBody(i,sakai)}
     </li>
 {/macro}
 ${macros["search.listContent"] = listContent |eat}

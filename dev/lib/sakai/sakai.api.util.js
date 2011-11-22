@@ -1354,7 +1354,7 @@ define(
           */
         processMacros : function (url, asyncreq) {
             var asyncsetting = true;
-            if (asyncreq) {
+            if (asyncreq === false) {
                 asyncsetting = asyncreq;
             }
             var mc = this.macroCache;

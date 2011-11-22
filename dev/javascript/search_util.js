@@ -170,14 +170,11 @@ require(["jquery","sakai/sakai.api.core"], function($, sakai) {
         });
 
         $(window).bind("sakai.entity.updateOwnCounts", function(e, context) {
-            alert("Freakin' rad 2!"); alert(context.contentId);
-            sakai.api.Server.loadJSON('/p/jy9mjaTCo.infinity.json',function(success,data) {
-                alert(data);
+            sakai.api.Server.loadJSON('/p/'+context.contentId+'.infinity.json',function(success,data) {
+                sakai.api.Content.prepareContentForRender([data],sakai.data.me,function(results) {
+                    sakai.api.Util.TemplateRenderer($("#search_content_item_template"),{item:results[0],sakai:sakai},$("#"+context.contentId));
+                });
             });
-            // $(window).trigger("load.content_profile.sakai", function() {
-            //     prepareRenderContext(renderObj);
-            //     $("#entity_owns").html(sakai.api.Util.TemplateRenderer("entity_counts_template", renderObj));
-            // }, false);
         });
 
         /////////////////////////
